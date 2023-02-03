@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Todo's List</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">Todo's</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="file:///D:/visual%20studio/.vscode/jsTodolist.html">Home <span
+                            class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2 " type="search" placeholder="Enter Title to search"
+                    aria-label="Search" id="finder">
+                <button class="btn btn-outline-success my-2 my-sm-0 btn-sm bg-light" type="submit" id="search"
+                    onclick="finders()">Search</button>
+            </form>
+        </div>
+    </nav>
+    <h2 class="text-center my-4">To-DO's List</h2>
+    <div class="container" style="background-color:lightblue; padding:30px; border-radius: 5px;">
+
+        <div class="form-group">
+            <label for="exampleInputEmail1">Title</label>
+            <input type="text" class="form-control" id="titlepart" placeholder="Enter Your title">
+
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea type="text" class="form-control" id="description"></textarea>
+        </div>
+        <button id="add" class="btn btn-primary">Add to List</button>
+        <button class="btn btn-primary" onclick="cle()">Clear list</button>
+
+    </div>
+    <h2 class="text-center">Your Items</h2>
+    <div class="container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">S.No.</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Title-description </th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="tablebody">
+                <tr>
+                    <th scope="row">1.</th>
+                    <td>Coffee Time</td>
+                    <td>Go an have some Coffee</td>
+                    <td>
+                        <button class="btn btn-sm bg-primary">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script>
+        function update() {
+
+            tit = document.getElementById('titlepart').value;
+            desc = document.getElementById('description').value;
+            if (localStorage.getItem('itemsJSON') == null) {
+                itemsarray = [];
+                itemsarray.push([tit, desc]);
+                localStorage.setItem('itemsJSON', JSON.stringify(itemsarray))
+            }
+            else {
+                itemsarraystr = localStorage.getItem('itemsJSON')
+                itemsarray = JSON.parse(itemsarraystr);
+                itemsarray.push([tit, desc]);
+                localStorage.setItem('itemsJSON', JSON.stringify(itemsarray))
+            }
+            newadd();
+        }
+        function newadd() {
+
+            if (localStorage.getItem('itemsJSON') == null) {
+                itemsarray = [];
+
+                localStorage.setItem('itemsJSON', JSON.stringify(itemsarray))
+            }
+            else {
+                itemsarraystr = localStorage.getItem('itemsJSON')
+                itemsarray = JSON.parse(itemsarraystr);
+
+            }
+
+            let tablebody = document.getElementById('tablebody');
+            let str = "";
+            itemsarray.forEach((element, index) => {
+                str += `
+        <tr>
+        <th scope="row">${index + 1}</th>
+        <td>${element[0]}</td>
+        <td>${element[1]}</td>
+        <td>
+        <button class="btn btn-sm bg-primary" onclick="del(${index})">Delete</button>
+        </td>
+      </tr>`;
+            });
+            tablebody.innerHTML = str;
+        }
+        add = document.getElementById("add");
+        add.addEventListener("click", update);
+        newadd();
+        function del(indexitem) {
+            itemsarraystr = localStorage.getItem('itemsJSON')
+            itemsarray = JSON.parse(itemsarraystr);
+            itemsarray.splice(indexitem, 1);
+            localStorage.setItem('itemsJSON', JSON.stringify(itemsarray))
+            newadd();
+        }
+        function cle() {
+            if (confirm("Are you sure to clear List")) {
+                localStorage.clear();
+                console.log("cleard local storage");
+                newadd();
+            }
+        }
+        function finders() {
+            let ser = document.getElementById("finder").value;
+            if (localStorage.getItem('itemsJSON') == null) {
+                itemsarray = [];
+
+                localStorage.setItem('itemsJSON', JSON.stringify(itemsarray))
+            }
+            else {
+                itemsarraystr = localStorage.getItem('itemsJSON')
+                itemsarray = JSON.parse(itemsarraystr);
+
+            }
+            itemsarraystr = localStorage.getItem('itemsJSON')
+            itemsarray = JSON.parse(itemsarraystr);
+            let k = 0;
+            itemsarray.forEach((element, index) => {
+                if (ser == element[0]) {
+                    k = 1;
+                    alert("Your item is at index " + (index + 1));
+
+                }
+
+
+            }
+            )
+            if (k == 0) {
+                alert("Your item is not in the list");
+            }
+
+        }
+    </script>
+</body>
+
+</html>
